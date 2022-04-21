@@ -67,6 +67,7 @@ void draw() {
 		text("Recording...", 60, 330);
 		text("Press any key to end recording and save data.", 60, 380);
 		if(second() % 2 == 1) {
+			noStroke();
 			fill(255, 0, 0);
 			ellipse(40, 321, 20, 20);
 			fill(255);
@@ -97,6 +98,15 @@ void draw() {
 		//draw line
 		stroke(colors[i][0], colors[i][1], colors[i][2]);
 		for(int j = steps; j > max(2, steps -300); j--) line(900 - (steps - j) * 1.53, 10 + 230 * ((float)(1024 - data[i][j - 1]) / (float)1024), 900 - (steps - (j - 1)) * 1.53, 10 + 230 * ((float)(1024 - data[i][j - 2]) / (float)1024));
+	}
+	stroke(255);
+	fill(255);
+	for(int i = steps; i > steps - 300; i--) {
+		if(i % 150 == 0 && i >= 0) {
+			float lineX = 900 - 460 * ((float)(steps - i) / (float)300);
+			line(lineX, 10, lineX, 270);
+			text(i, lineX + 10, 270);
+		}
 	}
 }
 
