@@ -4,14 +4,15 @@ Arduino arduino;
 
 int[][] colors = {{255, 0, 0}, {0, 255, 0}, {0, 0, 255}, {255, 255, 0}, {255, 0, 255}, {0, 255, 255}, {255, 255, 255}, {0, 0, 0}};
 int[][] data;
+int steps = 0;
 boolean isError = false;
 boolean isRecording = false;
 
 /* --- Properties start --- */
 
-String serialPort = ""; //Arduino serial port.
+String serialPort = "COM3"; //Arduino serial port.
 String fontFile = "CourierNewPSMT-48.vlw"; //Font file name.
-int[] pins = {}; //Enter the pin number to record the analog input. The maximum number is 8.
+int[] pins = {0, 1, 2, 3, 4, 5, 6, 7}; //Enter the pin number to record the analog input. The maximum number is 8.
 
 /* --- Properties end --- */
 
@@ -37,7 +38,7 @@ void setup() {
 		return;
 	}
 	frameRate(30);
-	size(1000, 600);
+	size(1005, 470);
 	textFont(loadFont(fontFile));
 }
 
@@ -66,4 +67,27 @@ void draw() {
 		fill(255);
 		text("Analog" + i, 930, i * 25 + 37);
 	}
+
+	//draw messages
+	fill(255);
+	textSize(30);
+	if(isRecording) {
+		text("Recording", 60, 330);
+		text("Press any key to end recording and save data.", 60, 380);
+		if(second() % 2 == 1) {
+			fill(255, 0, 0);
+			ellipse(40, 341, 20, 20);
+			fill(255);
+    	}
+	}
+	else {
+		text("Press any key to record.", 60, 330);
+		text("Press esc key to exit.", 60, 380);
+	}
+	text("Steps: " + steps + " (" + nf(floor(steps / 180), 2) + ":" + nf(floor(steps / 30) % 60, 2) + ")", 60, 430);
+}
+
+void keyPressed() {
+	if(isRecording) isRecording = false;
+	else isRecording = true;
 }
