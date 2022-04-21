@@ -10,9 +10,9 @@ boolean isRecording = false;
 
 /* --- Properties start --- */
 
-String serialPort = "COM3"; //Arduino serial port.
+String serialPort = ""; //Arduino serial port.
 String fontFile = "CourierNewPSMT-48.vlw"; //Font file name.
-int[] pins = {0, 1, 2, 3, 4, 5, 6, 7}; //Enter the pin number to record the analog input. The maximum number is 8.
+int[] pins = {}; //Enter the pin number to record the analog input. The maximum number is 8.
 
 /* --- Properties end --- */
 
@@ -55,23 +55,6 @@ void draw() {
 		text("Analog" + i + "(" + pins[i] + ") = " + input, 15, 30 * (i + 1));
 	}
 
-	//draw line graph
-	noFill();
-	stroke(255);
-	rect(440, 10, 460, 230);
-	line(440, 120, 900, 120);
-	textSize(15);
-	text("1023", 395, 20);
-	text("512", 405, 126);
-	text("0", 423, 240);
-	for(int i = 0; i < pins.length; i++) {
-		noStroke();
-		fill(colors[i][0], colors[i][1], colors[i][2]);
-		rect(910, i * 25 + 30, 15, 5);
-		fill(255);
-		text("Analog" + i, 930, i * 25 + 37);
-	}
-
 	//draw messages
 	fill(255);
 	textSize(30);
@@ -94,6 +77,27 @@ void draw() {
 		text("Press esc key to exit.", 60, 380);
 	}
 	text("Steps: " + steps + " (" + nf(floor(floor(steps / 30) / 60), 2) + ":" + nf(floor(steps / 30) % 60, 2) + ")", 60, 430);
+
+	//draw line graph
+	noFill();
+	stroke(255);
+	rect(440, 10, 460, 230);
+	line(440, 120, 900, 120);
+	textSize(15);
+	text("1023", 395, 20);
+	text("512", 405, 126);
+	text("0", 423, 240);
+	for(int i = 0; i < pins.length; i++) {
+		noStroke();
+		fill(colors[i][0], colors[i][1], colors[i][2]);
+		rect(910, i * 25 + 30, 15, 5);
+		fill(255);
+		text("Analog" + i, 930, i * 25 + 37);
+		
+		//draw line
+		stroke(colors[i][0], colors[i][1], colors[i][2]);
+		for(int j = steps; j > max(2, steps -300); j--) line(900 - (steps - j) * 1.53, 10 + 230 * ((float)(1024 - data[i][j - 1]) / (float)1024), 900 - (steps - (j - 1)) * 1.53, 10 + 230 * ((float)(1024 - data[i][j - 2]) / (float)1024));
+	}
 }
 
 void keyPressed() {
