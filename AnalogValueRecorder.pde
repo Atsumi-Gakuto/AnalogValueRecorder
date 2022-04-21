@@ -28,7 +28,6 @@ void setup() {
 		pins = new int[8];
 		for(int i = 0; i < 8; i++) pins[i] = pinsTemp[i];
 	}
-	data = new int[pins.length][];
 	try {
 		arduino = new Arduino(this, serialPort, 57600);
 	}
@@ -49,7 +48,12 @@ void draw() {
 	background(120);
 	textSize(30);
 	fill(255);
-	for(int i = 0; i < pins.length; i++) text("Analog" + i + "(" + pins[i] + ") = " + arduino.analogRead(pins[i]), 15, 30 * (i + 1));
+	int[] readData = new int[0];
+	for(int i = 0; i < pins.length; i++) {
+		int input = arduino.analogRead(pins[i]);
+		readData = append(readData, input);
+		text("Analog" + i + "(" + pins[i] + ") = " + input, 15, 30 * (i + 1));
+	}
 
 	//draw line graph
 	noFill();
@@ -72,11 +76,16 @@ void draw() {
 	fill(255);
 	textSize(30);
 	if(isRecording) {
-		text("Recording", 60, 330);
+		//Record process
+		steps++;
+		for(int i = 0; i < pins.length; i++) data[i] = append(data[i], readData[i]);
+
+		//draw
+		text("Recording...", 60, 330);
 		text("Press any key to end recording and save data.", 60, 380);
 		if(second() % 2 == 1) {
 			fill(255, 0, 0);
-			ellipse(40, 341, 20, 20);
+			ellipse(40, 321, 20, 20);
 			fill(255);
     	}
 	}
@@ -84,10 +93,29 @@ void draw() {
 		text("Press any key to record.", 60, 330);
 		text("Press esc key to exit.", 60, 380);
 	}
-	text("Steps: " + steps + " (" + nf(floor(steps / 180), 2) + ":" + nf(floor(steps / 30) % 60, 2) + ")", 60, 430);
+	text("Steps: " + steps + " (" + nf(floor(floor(steps / 30) / 60), 2) + ":" + nf(floor(steps / 30) % 60, 2) + ")", 60, 430);
 }
 
 void keyPressed() {
-	if(isRecording) isRecording = false;
-	else isRecording = true;
+	if(isRecording) {
+		isRecording = false;
+
+		//Export to csv file.
+		String[] lines = new String[steps + 1];
+		lines[0] = "Steps,";
+		for(int i = 0; i < pins.length; i++) lines[0] += "Analog" + i + ",";
+		lines[0] = lines[0].substring(0, lines[0].length() - 1);
+		for(int i = 0; i < steps; i++) {
+			lines[i + 1] = i + ",";
+			for(int j = 0; j < pins.length; j++) lines[i + 1] += data[j][i] + ",";
+			lines[i + 1] = lines[i + 1].substring(0, lines[i + 1].length() - 1);
+		}
+		saveStrings("Rec_" + nf(month(), 2) + nf(day(), 2) + "_" + nf(hour(), 2) + nf(minute(), 2) + nf(second(), 2) + ".csv", lines);
+	}
+	else {
+		data = new int[pins.length][];
+		for(int i = 0; i < data.length; i++) data[i] = new int[0];
+		steps = 0;
+		isRecording = true;
+	}
 }
