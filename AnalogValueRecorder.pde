@@ -101,11 +101,11 @@ void draw() {
 	}
 	stroke(255);
 	fill(255);
-	for(int i = steps; i > steps - 300; i--) {
-		if(i % 150 == 0 && i >= 0) {
-			float lineX = 900 - 460 * ((float)(steps - i) / (float)300);
+	for(int i = steps; i > steps - 300; i -= 150) {
+		if(i >= 0) {
+			float lineX = 900 - 460 * ((float)(steps - (i - i % 150)) / (float)300);
 			line(lineX, 10, lineX, 270);
-			text(i, lineX + 10, 270);
+			text(i - i % 150, lineX + 10, 270);
 		}
 	}
 }
