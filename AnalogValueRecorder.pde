@@ -97,7 +97,7 @@ void draw() {
 		
 		//draw line
 		stroke(colors[i][0], colors[i][1], colors[i][2]);
-		for(int j = steps; j > max(2, steps -300); j--) line(900 - (steps - j) * 1.53, 10 + 230 * ((float)(1024 - data[i][j - 1]) / (float)1024), 900 - (steps - (j - 1)) * 1.53, 10 + 230 * ((float)(1024 - data[i][j - 2]) / (float)1024));
+		for(int j = steps; j > max(2, steps -300); j--) line(900 - (steps - j) * 1.53, 10 + 230 * ((float)(1024 - min(max(data[i][j - 1], 0), 1023)) / (float)1024), 900 - (steps - (j - 1)) * 1.53, 10 + 230 * ((float)(1024 - min(max(data[i][j - 2], 0), 1023)) / (float)1024));
 	}
 	stroke(255);
 	fill(255);
