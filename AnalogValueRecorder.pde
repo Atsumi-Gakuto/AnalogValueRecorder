@@ -10,9 +10,9 @@ boolean isRecording = false;
 
 /* --- Properties start --- */
 
-String serialPort = ""; //Arduino serial port.
+String serialPort = "COM3"; //Arduino serial port.
 String fontFile = "CourierNewPSMT-48.vlw"; //Font file name.
-int[] pins = {}; //Enter the pin number to record the analog input. The maximum number is 8.
+int[] pins = {0, 1, 2}; //Enter the pin number to record the analog input. The maximum number is 8.
 
 /* --- Properties end --- */
 
@@ -65,17 +65,17 @@ void draw() {
 
 		//draw
 		text("Recording...", 60, 330);
-		text("Press any key to end recording and save data.", 60, 380);
+		text("Press Space key to end recording and save data.", 60, 380);
 		if(second() % 2 == 1) {
 			noStroke();
 			fill(255, 0, 0);
-			ellipse(40, 321, 20, 20);
+			circle(40, 321, 20);
 			fill(255);
     	}
 	}
 	else {
-		text("Press any key to record.", 60, 330);
-		text("Press esc key to exit.", 60, 380);
+		text("Press Space key to record.", 60, 330);
+		text("Press Esc key to exit.", 60, 380);
 	}
 	text("Steps: " + steps + " (" + nf(floor(floor(steps / 30) / 60), 2) + ":" + nf(floor(steps / 30) % 60, 2) + ")", 60, 430);
 
@@ -111,25 +111,27 @@ void draw() {
 }
 
 void keyPressed() {
-	if(isRecording) {
-		isRecording = false;
+	if(keyCode == 32) {
+		if(isRecording) {
+			isRecording = false;
 
-		//Export to csv file.
-		String[] lines = new String[steps + 1];
-		lines[0] = "Steps,";
-		for(int i = 0; i < pins.length; i++) lines[0] += "Analog" + i + ",";
-		lines[0] = lines[0].substring(0, lines[0].length() - 1);
-		for(int i = 0; i < steps; i++) {
-			lines[i + 1] = i + ",";
-			for(int j = 0; j < pins.length; j++) lines[i + 1] += data[j][i] + ",";
-			lines[i + 1] = lines[i + 1].substring(0, lines[i + 1].length() - 1);
+			//Export to csv file.
+			String[] lines = new String[steps + 1];
+			lines[0] = "Steps,";
+			for(int i = 0; i < pins.length; i++) lines[0] += "Analog" + i + ",";
+			lines[0] = lines[0].substring(0, lines[0].length() - 1);
+			for(int i = 0; i < steps; i++) {
+				lines[i + 1] = i + ",";
+				for(int j = 0; j < pins.length; j++) lines[i + 1] += data[j][i] + ",";
+				lines[i + 1] = lines[i + 1].substring(0, lines[i + 1].length() - 1);
+			}
+			saveStrings("Rec_" + nf(month(), 2) + nf(day(), 2) + "_" + nf(hour(), 2) + nf(minute(), 2) + nf(second(), 2) + ".csv", lines);
 		}
-		saveStrings("Rec_" + nf(month(), 2) + nf(day(), 2) + "_" + nf(hour(), 2) + nf(minute(), 2) + nf(second(), 2) + ".csv", lines);
-	}
-	else {
-		data = new int[pins.length][];
-		for(int i = 0; i < data.length; i++) data[i] = new int[0];
-		steps = 0;
-		isRecording = true;
+		else {
+			data = new int[pins.length][];
+			for(int i = 0; i < data.length; i++) data[i] = new int[0];
+			steps = 0;
+			isRecording = true;
+		}
 	}
 }
