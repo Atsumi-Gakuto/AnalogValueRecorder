@@ -11,9 +11,9 @@ int state = 0; //0. Normal (Not recording), 1. Recording, 2. Check mode
 
 /* --- Properties start --- */
 
-String serialPort = "COM3"; //Arduino serial port.
+String serialPort = ""; //Arduino serial port.
 String fontFile = "CourierNewPSMT-48.vlw"; //Font file name.
-int[] pins = {0, 1, 2}; //Enter the pin number to record the analog input. The maximum number is 8.
+int[] pins = {}; //Enter the pin number to record the analog input. The maximum number is 8.
 
 /* --- Properties end --- */
 
@@ -38,7 +38,7 @@ void setup() {
 		return;
 	}
 	frameRate(30);
-	size(1005, 500);
+	size(1005, 510);
 	textFont(loadFont(fontFile));
 }
 
@@ -68,7 +68,6 @@ void draw() {
 		if(state == 1) {
 			for(int i = 0; i < pins.length; i++) data[i] = append(data[i], readData[i]);
 		}
-		println(graphData[0].length);
 		steps++;
 
 		//draw
