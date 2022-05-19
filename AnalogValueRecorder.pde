@@ -7,13 +7,13 @@ int[][] data;
 int[][] graphData;
 int steps = 0;
 boolean isError = false;
-int state = 0; //0. Normal (Not recording), 1. Recording, 2. Check mode 
+int state = 0; //0. Normal (Not recording), 1. Recording, 2. Check mode , 3. Review mode
 
 /* --- Properties start --- */
 
-String serialPort = ""; //Arduino serial port.
+String serialPort = "COM3"; //Arduino serial port.
 String fontFile = "CourierNewPSMT-48.vlw"; //Font file name.
-int[] pins = {}; //Enter the pin number to record the analog input. The maximum number is 8.
+int[] pins = {0, 1, 2}; //Enter the pin number to record the analog input. The maximum number is 8.
 
 /* --- Properties end --- */
 
@@ -59,41 +59,53 @@ void draw() {
 	//draw messages
 	fill(255);
 	textSize(30);
-	if(state == 1 || state == 2) {
-		//Record process
-		for(int i = 0; i < pins.length; i++) graphData[i] = append(graphData[i], readData[i]);
-		if(graphData[0].length > 300) {
-			for(int i = 0; i < pins.length; i++) graphData[i] = subset(graphData[i], graphData[i].length - 300, 300);
-		}
-		if(state == 1) {
-			for(int i = 0; i < pins.length; i++) data[i] = append(data[i], readData[i]);
-		}
-		steps++;
-
-		//draw
-		if(state == 1) {
-			text("Recording...", 60, 330);
-			text("Press Space key to end recording and save data.", 60, 430);
-			if(second() % 2 == 1) {
-				noStroke();
-				fill(255, 0, 0);
-				circle(40, 321, 20);
-				fill(255);
+	switch(state) {
+		case 0:
+			text("Press Space key to record.", 60, 330);
+			textSize(20);
+			text("Press C key for check mode (Draws a graph without recording).", 80, 360);
+			if(data != null) {
+				if(data[0].length >= 1) text("Press R key for review mode (Shows a graph of the last record).", 80, 390);
 			}
-		}
-		else {
-			text("Check mode", 60, 330);
-			text("Press Space key to exit check mode", 60, 430);
-		}
+			textSize(30);
+			text("Press Esc key to exit.", 60, 430);
+			break;
+		case 1:
+		case 2:
+			//Record process
+			for(int i = 0; i < pins.length; i++) graphData[i] = append(graphData[i], readData[i]);
+			if(graphData[0].length > 300) {
+				for(int i = 0; i < pins.length; i++) graphData[i] = subset(graphData[i], graphData[i].length - 300, 300);
+			}
+			if(state == 1) {
+				for(int i = 0; i < pins.length; i++) data[i] = append(data[i], readData[i]);
+			}
+			steps++;
+
+			//draw
+			if(state == 1) {
+				text("Recording...", 60, 330);
+				text("Press Space key to end recording and save data.", 60, 430);
+				if(second() % 2 == 1) {
+					noStroke();
+					fill(255, 0, 0);
+					circle(40, 321, 20);
+					fill(255);
+				}
+			}
+			else {
+				text("Check mode", 60, 330);
+				text("Press Space key to exit check mode.", 60, 430);
+			}
+			break;
+		case 3:
+			text("Review mode", 60, 330);
+			if(pins.length == 1) text("Press 1 key to show/hide data.", 60, 380);
+			else if(pins.length >= 2 && pins.length <= 8) text("Press 1 ~ " + pins.length + " key to show/hide data.", 60, 380);
+			text("Press Space key to exit review mode.", 60, 430);
+			break;
 	}
-	else {
-		text("Press Space key to record.", 60, 330);
-		textSize(20);
-		text("Press C key for check mode (Draws graph without recording).", 80, 360);
-		textSize(30);
-		text("Press Esc key to exit.", 60, 430);
-	}
-	text("Steps: " + steps + " (" + nf(floor(floor(steps / 30) / 60), 2) + ":" + nf(floor(steps / 30) % 60, 2) + ")", 60, 480);
+	if(state >= 0 && state <= 2) text("Steps: " + steps + " (" + nf(floor(floor(steps / 30) / 60), 2) + ":" + nf(floor(steps / 30) % 60, 2) + ")", 60, 480);
 
 	//draw line graph
 	noFill();
@@ -140,6 +152,11 @@ void keyPressed() {
 				if(keyCode == 32) state = 1;
 				else state = 2;
 			}
+			else if(keyCode == 82 && data != null) {
+				if(data[0].length >= 1) {
+					state = 3;
+				}
+			}
 			break;
 		case 1:
 			if(keyCode == 32) {
@@ -158,6 +175,9 @@ void keyPressed() {
 			}
 			break;
 		case 2:
+			if(keyCode == 32) state = 0;
+			break;
+		case 3:
 			if(keyCode == 32) state = 0;
 			break;
 	}
