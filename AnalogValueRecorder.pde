@@ -37,7 +37,7 @@ void setup() {
 		return;
 	}
 	frameRate(30);
-	size(1005, 470);
+	size(1005, 500);
 	textFont(loadFont(fontFile));
 }
 
@@ -65,7 +65,7 @@ void draw() {
 
 		//draw
 		text("Recording...", 60, 330);
-		text("Press Space key to end recording and save data.", 60, 380);
+		text("Press Space key to end recording and save data.", 60, 430);
 		if(second() % 2 == 1) {
 			noStroke();
 			fill(255, 0, 0);
@@ -75,9 +75,12 @@ void draw() {
 	}
 	else {
 		text("Press Space key to record.", 60, 330);
-		text("Press Esc key to exit.", 60, 380);
+		textSize(20);
+		text("Press C key for check mode (Draws graph without recording).", 80, 360);
+		textSize(30);
+		text("Press Esc key to exit.", 60, 430);
 	}
-	text("Steps: " + steps + " (" + nf(floor(floor(steps / 30) / 60), 2) + ":" + nf(floor(steps / 30) % 60, 2) + ")", 60, 430);
+	text("Steps: " + steps + " (" + nf(floor(floor(steps / 30) / 60), 2) + ":" + nf(floor(steps / 30) % 60, 2) + ")", 60, 480);
 
 	//draw line graph
 	noFill();
