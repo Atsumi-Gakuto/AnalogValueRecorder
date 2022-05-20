@@ -125,15 +125,26 @@ void draw() {
 		
 		//draw line
 		stroke(colors[i][0], colors[i][1], colors[i][2]);
-		for(int j = min(steps, 300); j > 2; j--) line(900 - (min(steps, 300) - j) * 1.53, 10 + 230 * ((float)(1024 - min(max(graphData[i][j - 1], 0), 1023)) / (float)1024), 900 - (min(steps, 300) - (j - 1)) * 1.53, 10 + 230 * ((float)(1024 - min(max(graphData[i][j - 2], 0), 1023)) / (float)1024));
+		if(state == 3) {
+			for(int j = steps; j > 2; j--) line(900 - (steps - j) * (460 / (float)steps), 10 + 230 * ((float)(1024 - min(max(data[i][j - 1], 0), 1023)) / (float)1024), 900 - (steps - (j - 1)) * (460 / (float)steps), 10 + 230 * ((float)(1024 - min(max(data[i][j - 2], 0), 1023)) / (float)1024));
+		}
+		else {
+			for(int j = min(steps, 300); j > 2; j--) line(900 - (min(steps, 300) - j) * 1.53, 10 + 230 * ((float)(1024 - min(max(graphData[i][j - 1], 0), 1023)) / (float)1024), 900 - (min(steps, 300) - (j - 1)) * 1.53, 10 + 230 * ((float)(1024 - min(max(graphData[i][j - 2], 0), 1023)) / (float)1024));
+		}
 	}
 	stroke(255);
 	fill(255);
-	for(int i = steps; i > steps - 300; i -= 150) {
-		if(i >= 0) {
-			float lineX = 900 - 460 * ((float)(steps - (i - i % 150)) / (float)300);
-			line(lineX, 10, lineX, 270);
-			text(i - i % 150, lineX + 10, 270);
+	if(state == 3) {
+		text(0, 440, 260);
+		text(steps, 900, 260);
+	}
+	else {
+		for(int i = steps; i > steps - 300; i -= 150) {
+			if(i >= 0) {
+				float lineX = 900 - 460 * ((float)(steps - (i - i % 150)) / (float)300);
+				line(lineX, 10, lineX, 260);
+				text(i - i % 150, lineX + 10, 260);
+			}
 		}
 	}
 }
