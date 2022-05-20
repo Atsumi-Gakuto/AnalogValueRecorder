@@ -16,7 +16,7 @@
 
 ソースコード内の、
 
-```java
+```processing
 /* --- Properties start --- */
 
 String serialPort = ""; //Arduino serial port.
