@@ -5,6 +5,7 @@ Arduino arduino;
 int[][] colors = {{255, 0, 0}, {0, 255, 0}, {0, 0, 255}, {255, 255, 0}, {255, 0, 255}, {0, 255, 255}, {255, 255, 255}, {0, 0, 0}};
 int[][] data;
 int[][] graphData;
+boolean[] showData;
 int steps = 0;
 boolean isError = false;
 int state = 0; //0. Normal (Not recording), 1. Recording, 2. Check mode , 3. Review mode
@@ -53,7 +54,19 @@ void draw() {
 	for(int i = 0; i < pins.length; i++) {
 		int input = arduino.analogRead(pins[i]);
 		readData = append(readData, input);
-		text("Analog" + i + "(" + pins[i] + ") = " + input, 15, 30 * (i + 1));
+		if(state == 3) {
+			text("Analog" + i + "(" + pins[i] + ") = ", 15, 30 * (i + 1));
+			if(showData[i]) {
+				fill(255);
+				stroke(255);
+			}
+			else {
+				noFill();
+				stroke(255);
+			}
+			rect(260, 30 * (i + 1) - 20, 20, 20);
+		}
+		else text("Analog" + i + "(" + pins[i] + ") = " + input, 15, 30 * (i + 1));
 	}
 
 	//draw messages
@@ -126,7 +139,9 @@ void draw() {
 		//draw line
 		stroke(colors[i][0], colors[i][1], colors[i][2]);
 		if(state == 3) {
-			for(int j = steps; j > 2; j--) line(900 - (steps - j) * (460 / (float)steps), 10 + 230 * ((float)(1024 - min(max(data[i][j - 1], 0), 1023)) / (float)1024), 900 - (steps - (j - 1)) * (460 / (float)steps), 10 + 230 * ((float)(1024 - min(max(data[i][j - 2], 0), 1023)) / (float)1024));
+			if(showData[i]) {
+				for(int j = steps; j > 2; j--) line(900 - (steps - j) * (460 / (float)steps), 10 + 230 * ((float)(1024 - min(max(data[i][j - 1], 0), 1023)) / (float)1024), 900 - (steps - (j - 1)) * (460 / (float)steps), 10 + 230 * ((float)(1024 - min(max(data[i][j - 2], 0), 1023)) / (float)1024));
+			}
 		}
 		else {
 			for(int j = min(steps, 300); j > 2; j--) line(900 - (min(steps, 300) - j) * 1.53, 10 + 230 * ((float)(1024 - min(max(graphData[i][j - 1], 0), 1023)) / (float)1024), 900 - (min(steps, 300) - (j - 1)) * 1.53, 10 + 230 * ((float)(1024 - min(max(graphData[i][j - 2], 0), 1023)) / (float)1024));
@@ -165,6 +180,8 @@ void keyPressed() {
 			}
 			else if(keyCode == 82 && data != null) {
 				if(data[0].length >= 1) {
+					showData = new boolean[pins.length];
+					for(int i = 0; i < pins.length; i++) showData[i] = true;
 					state = 3;
 				}
 			}
@@ -190,6 +207,9 @@ void keyPressed() {
 			break;
 		case 3:
 			if(keyCode == 32) state = 0;
+			for(int i = 0; i < pins.length; i++) {
+				if(keyCode == 49 + i) showData[i] = !showData[i];
+			}
 			break;
 	}
 }
