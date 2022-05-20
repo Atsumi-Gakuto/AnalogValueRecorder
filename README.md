@@ -33,3 +33,8 @@ int[] pins = {}; //Enter the pin number to record the analog input. The maximum 
 
 ### 確認モード
 **Cキー**を押して開始します。グラフ描画をしますが、記録データを出力しません。動作確認用のモードです。
+
+### レビューモード
+記録モードを終了した直後に**Rキー**を押して開始します。最後に記録したデータのグラフを表示します。数字キーの1~9（テンキーではない）を押すと各データを表示/非表示します。
+
+![Review mode](README_Images/ReviewMode.jpg)

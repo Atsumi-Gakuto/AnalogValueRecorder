@@ -8,13 +8,13 @@ int[][] graphData;
 boolean[] showData;
 int steps = 0;
 boolean isError = false;
-int state = 0; //0. Normal (Not recording), 1. Recording, 2. Check mode , 3. Review mode
+int state = 0; //0. Normal (Not recording), 1. Recording, 2. Check mode, 3. Review mode
 
 /* --- Properties start --- */
 
-String serialPort = "COM3"; //Arduino serial port.
+String serialPort = ""; //Arduino serial port.
 String fontFile = "CourierNewPSMT-48.vlw"; //Font file name.
-int[] pins = {0, 1, 2}; //Enter the pin number to record the analog input. The maximum number is 8.
+int[] pins = {}; //Enter the pin number to record the analog input. The maximum number is 8.
 
 /* --- Properties end --- */
 
