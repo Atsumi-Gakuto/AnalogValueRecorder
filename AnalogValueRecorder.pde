@@ -90,9 +90,7 @@ void draw() {
 			if(graphData[0].length > 300) {
 				for(int i = 0; i < pins.length; i++) graphData[i] = subset(graphData[i], graphData[i].length - 300, 300);
 			}
-			if(state == 1) {
-				for(int i = 0; i < pins.length; i++) data[i] = append(data[i], readData[i]);
-			}
+			if(state == 1) for(int i = 0; i < pins.length; i++) data[i] = append(data[i], readData[i]);
 			steps++;
 
 			//draw
